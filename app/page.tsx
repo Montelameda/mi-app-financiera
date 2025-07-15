@@ -1,39 +1,95 @@
-// app/page.tsx
-'use client';
-import { Montserrat } from 'next/font/google';
+// Indica que este componente se ejecuta en el lado del cliente (en el navegador)
+"use client";
 
-const montserrat = Montserrat({ subsets: ['latin'] });
+// Importamos las herramientas de React que necesitamos
+import { useState, useEffect } from 'react';
 
-export default function WelcomePage() {
+// Este es el componente principal de tu página de inicio
+export default function HomePage() {
+
+  // --- ESTADO DEL COMPONENTE ---
+  // 1. Guardamos la fecha y hora actual. Se inicializa en null.
+  const [currentDateTime, setCurrentDateTime] = useState<Date | null>(null);
+  
+  // 2. Guardamos el color actual del botón. Empieza en azul.
+  const [buttonColor, setButtonColor] = useState<'#3b82f6' | '#ef4444'>('#3b82f6'); // Azul o Rojo
+
+  // --- EFECTOS ---
+  // Este bloque de código se ejecuta una sola vez cuando el componente carga
+  useEffect(() => {
+    // Creamos un intervalo que actualiza la fecha y hora cada segundo
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    // Función de limpieza: se ejecuta cuando el componente se "desmonta"
+    // para evitar que el reloj siga corriendo innecesariamente.
+    return () => clearInterval(timer);
+  }, []); // El array vacío [] asegura que solo se ejecute una vez.
+
+  // --- FUNCIONES DE EVENTOS ---
+  // Esta función se llama cuando se hace clic en el botón
+  const handleButtonClick = () => {
+    // Cambiamos el color del botón al color opuesto
+    setButtonColor(prevColor => prevColor === '#3b82f6' ? '#ef4444' : '#3b82f6');
+  };
+
+  // --- RENDERIZADO (LO QUE SE VE EN PANTALLA) ---
   return (
-    <main className={montserrat.className}>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
-        <div className="w-full max-w-sm bg-gray-800 rounded-xl p-8 shadow-lg">
-          <h1 className="text-2xl font-bold text-center mb-2">
-            Bienvenido a tu nueva vida financiera sin excusas.
-          </h1>
-          <p className="text-center text-gray-400 mb-8">
-            ¿Listo para poner orden sin morir de aburrimiento?
+    <main style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      backgroundColor: '#111827', // Un fondo oscuro
+      color: 'white',
+      fontFamily: 'sans-serif',
+      textAlign: 'center',
+      padding: '2rem'
+    }}>
+      
+      <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+        ¡Bienvenido a tu App Financiera!
+      </h1>
+      
+      <p style={{ fontSize: '1.5rem', marginBottom: '2rem' }}>
+        Esta es tu nueva página de inicio interactiva.
+      </p>
+
+      <div style={{
+        backgroundColor: '#1f2937',
+        padding: '2rem',
+        borderRadius: '10px',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)'
+      }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Fecha y Hora Actual (Chile)</h2>
+        {currentDateTime ? (
+          <p style={{ fontSize: '2rem', fontFamily: 'monospace', color: '#60a5fa' }}>
+            {currentDateTime.toLocaleTimeString('es-CL')}
           </p>
-          <div className="flex flex-col space-y-3 mb-6">
-            {/* Estos botones los haremos funcionales cuando implementemos el login */}
-            <button className="flex items-center justify-center w-full bg-white text-black font-semibold py-2.5 rounded-lg">
-              <span className="mr-2"></span> Continuar con Apple
-            </button>
-            <button className="flex items-center justify-center w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg">
-              <span className="mr-2">G</span> Continuar con Google
-            </button>
-          </div>
-          <div className="flex items-center my-6"><hr className="w-full border-gray-600" /><span className="px-2 text-gray-400">o</span><hr className="w-full border-gray-600" /></div>
-          <form className="flex flex-col space-y-4">
-            <input type="email" placeholder="Tu email" className="bg-gray-700 border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-green-500" />
-            <input type="password" placeholder="Tu contraseña" className="bg-gray-700 border-2 border-gray-600 rounded-lg p-3 focus:outline-none focus:border-green-500" />
-            <button type="submit" className="w-full bg-green-500 text-gray-900 font-bold py-3 rounded-lg hover:bg-green-600">
-              Iniciar Sesión
-            </button>
-          </form>
-        </div>
+        ) : (
+          <p>Cargando reloj...</p>
+        )}
       </div>
+
+      <button 
+        onClick={handleButtonClick}
+        style={{
+          marginTop: '2rem',
+          padding: '1rem 2rem',
+          fontSize: '1rem',
+          color: 'white',
+          backgroundColor: buttonColor,
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          transition: 'background-color 0.3s ease' // Transición suave de color
+        }}
+      >
+        ¡Haz clic para cambiar mi color!
+      </button>
+
     </main>
   );
 }
